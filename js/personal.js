@@ -132,6 +132,7 @@
       let dragEnd = 0;
       let mousedown = false;
 
+      //데스크탑용
       $('#section1').on({
         mousedown(e){
           mousedown = true;
@@ -165,35 +166,44 @@
         }
       });
 
+      //모바일용
+      $('#section1').on({
+        touchstart(e){
+          mousedown = true;
+          touchStart = e.originalEvent.changedTouches[0].clientX;
+          dragStart = e.clientX - $('.slide-wrap').offset().left + 250;
+          console.log(e.clientX, $('.slide-wrap').offset().left);
+          stopTimer();
+        },
+        touchend(e){
+          mousedown = false;
+          touchEnd = e.originalEvent.changedTouches[0].clientX;
+          if((touchStart - touchEnd) > 0){
+            if(!$('.slide-wrap').is(':animated')){
+              nextCount();
+            }
+          }
+          if((touchStart - touchEnd) < 0){
+            if(!$('.slide-wrap').is(':animated')){
+              prevCount();
+            }
+          }
+          autoTimer();
+        },
+        touchmove(e){
+          if(mousedown === false) return;
+          dragEnd = e.originalEvent.changedTouches[0].clientX;
+          // console.log(dragEnd - dragStart);
+          if(!$('.slide-wrap').is(':animated') && 0<cnt<2){
+            $('.slide-wrap').css({left : dragEnd - dragStart});
+          }
+        }
+      });
+
       function pageNation(){
         $('.page-btn').removeClass('on');
         $('.page-btn').eq(cnt).addClass('on');
       }
-
-      // $('.page-btn').eq(0).on({
-      //   click(e){
-      //     e.preventDefault();
-      //     clearInterval(setId);
-      //     cnt = 0;
-      //     mainSlide();
-      //   }        
-      // })
-      // $('.page-btn').eq(1).on({
-      //   click(e){
-      //     e.preventDefault();
-      //     clearInterval(setId);
-      //     cnt = 1;
-      //     mainSlide();
-      //   }        
-      // })
-      // $('.page-btn').eq(2).on({
-      //   click(e){
-      //     e.preventDefault();
-      //     clearInterval(setId);
-      //     cnt = 2;
-      //     mainSlide();
-      //   }        
-      // })
 
         $('.page-btn').each(function(idx){
           $(this).on({
